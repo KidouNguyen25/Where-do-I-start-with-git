@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Where Do I Start with Git – VS Code and GitHub from Zero</title>
+  <meta name="description" content="Quick guide for beginners: install VS Code and Git, connect GitHub, learn basic Git commands, commit rules, and deploy a static site to GitHub Pages.">
+  <link rel="alternate" hreflang="vi" href="../">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="progress"></div>
+
+  <nav class="nav">
+    <a href="#vscode">1. VS Code</a>
+    <a href="#git">2. Git</a>
+    <a href="#github">3. GitHub</a>
+    <a href="#vscode-git">4. Git in VS Code</a>
+    <a href="#commands">5. Basic commands</a>
+    <a href="#commit-rules">6. Commit rules</a>
+    <a href="#deploy">7. Deploy</a>
+    <span class="spacer"></span>
+    <a class="lang" href="../" hreflang="vi">VI</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Where do I start<br>with Git?</h1>
+    <p>Install VS Code and Git, connect GitHub, learn the basic commands, and put your website online. Short steps, easy to follow.</p>
+    <a class="cta" href="#vscode">Let's start</a>
+  </header>
+
+  <main>
+    <!-- 1 -->
+    <section id="vscode" class="reveal">
+      <h2><span class="num">1</span> Install Visual Studio Code</h2>
+      <p>VS Code is a free code editor with Git built in. We use it for the whole guide.</p>
+      <ol>
+        <li>Go to <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">code.visualstudio.com</a> and click <b>Download</b>.</li>
+        <li>Run the installer. On the <i>Select Additional Tasks</i> step, tick <b>Add to PATH</b> and <b>Add "Open with Code"</b>.</li>
+        <li>Open VS Code. To check, open any terminal and run the command below.</li>
+      </ol>
+      <pre class="code"><code>code --version</code></pre>
+      <p>Later, to open a folder in VS Code, go to that folder and run:</p>
+      <pre class="code"><code>code .</code></pre>
+      <!-- Slot for a real GIF: <img src="../assets/vscode-install.gif" alt="..."> -->
+    </section>
+
+    <!-- 2 -->
+    <section id="git" class="reveal">
+      <h2><span class="num">2</span> Install Git</h2>
+      <ol>
+        <li>Go to <a href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a> and download the version for your system.</li>
+        <li>Run the installer and click <b>Next</b> with the default options. The Windows version includes <b>Git Credential Manager</b>, used in part 3.</li>
+        <li>Open a new terminal (or press <code>Ctrl+`</code> in VS Code) and check.</li>
+      </ol>
+      <pre class="code"><code>git --version</code></pre>
+      <h3>Set your identity (one time)</h3>
+      <p>Git writes your name and email in every commit. Use your <b>GitHub account email</b> so commits link to you.</p>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>terminal</span></div>
+        <div class="term-body">
+          <p class="c">git --version</p>
+          <p class="o">git version 2.47.0.windows.1</p>
+          <p class="c">git config --global user.name "Your Name"</p>
+          <p class="c">git config --global user.email "you@example.com"</p>
+          <p class="c">git config --global --list</p>
+          <p class="o">user.name=Your Name</p>
+          <p class="o">user.email=you@example.com</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="github" class="reveal">
+      <h2><span class="num">3</span> Connect GitHub to Git</h2>
+      <p><b>Git</b> runs on your computer. <b>GitHub</b> stores your repos online. To push code, your computer must prove you own the account.</p>
+
+      <div class="link">
+        <div class="node">Your PC<br>(Git)</div>
+        <div class="wire"></div>
+        <div class="node">GitHub</div>
+      </div>
+      <div class="link-steps">
+        <span>1. Git sends a push request</span>
+        <span>2. GitHub asks: who are you?</span>
+        <span>3. You sign in, code is saved</span>
+      </div>
+
+      <h3>Step 1: Create an account and a repo</h3>
+      <ol>
+        <li>Sign up at <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>.</li>
+        <li>Click <b>New repository</b>, set a name, choose <b>Public</b>, click <b>Create repository</b>. Copy the repo URL.</li>
+      </ol>
+
+      <h3>Step 2: Choose how to sign in</h3>
+      <p><b>Option A – HTTPS + Git Credential Manager (easiest, recommended).</b> No extra setup. On your first push, a browser window opens. Sign in to GitHub and you are done. Your login is stored safely on your computer.</p>
+      <pre class="code"><code>git remote add origin https://github.com/YOUR-NAME/YOUR-REPO.git
+git push -u origin main</code></pre>
+
+      <p><b>Option B – SSH key.</b> For people who do not want to sign in again, or who use many computers.</p>
+      <pre class="code"><code>ssh-keygen -t ed25519 -C "you@example.com"
+cat ~/.ssh/id_ed25519.pub</code></pre>
+      <ol>
+        <li>Copy the content of the <code>.pub</code> file (the <b>public</b> key).</li>
+        <li>GitHub → <b>Settings</b> → <b>SSH and GPG keys</b> → <b>New SSH key</b> → paste it.</li>
+        <li>Test the connection, then use the SSH form of the URL.</li>
+      </ol>
+      <pre class="code"><code>ssh -T git@github.com
+git remote add origin git@github.com:YOUR-NAME/YOUR-REPO.git
+git push -u origin main</code></pre>
+
+      <div class="note warn"><b>Never</b> paste a password, token, or <b>private key</b> (<code>id_ed25519</code>, the file without <code>.pub</code>) into a command, a code file, or a chat. GitHub also does not accept your normal password for Git over HTTPS.</div>
+    </section>
+
+    <!-- 4 -->
+    <section id="vscode-git" class="reveal">
+      <h2><span class="num">4</span> Work with Git and GitHub in VS Code</h2>
+      <p>VS Code does most Git work with the mouse. No commands needed.</p>
+
+      <h3>Sign in to GitHub</h3>
+      <p>Click the <b>Accounts</b> icon (bottom left) → <b>Sign in with GitHub</b> → allow access in the browser.</p>
+
+      <h3>Get a repo, or put a folder on GitHub</h3>
+      <ul>
+        <li><b>Existing repo:</b> <code>Ctrl+Shift+P</code> → <code>Git: Clone</code> → paste the URL → pick a folder.</li>
+        <li><b>New folder:</b> open the folder → Source Control tab → <b>Publish to GitHub</b>. VS Code creates the repo and pushes it.</li>
+      </ul>
+
+      <h3>Daily workflow</h3>
+      <p>Open Source Control with <code>Ctrl+Shift+G</code>. Watch the demo below:</p>
+      <ol>
+        <li>Edit a file. It appears under <b>Changes</b>.</li>
+        <li>Click <b>+</b> to move it to <b>Staged Changes</b> (same as <code>git add</code>).</li>
+        <li>Type a message using the rules in part 6, then click <b>Commit</b>.</li>
+        <li>Click <b>Sync Changes</b> to send it to GitHub (same as <code>git push</code>).</li>
+      </ol>
+
+      <div class="scm">
+        <div class="scm-head">SOURCE CONTROL</div>
+        <div class="scm-msg" data-ph="Message (Ctrl+Enter to commit)" data-msg="feat: add homepage"></div>
+        <div class="scm-btn">✓ Commit</div>
+        <div class="scm-sync">⟳ Sync Changes 1↑</div>
+        <div class="scm-done">✔ Committed</div>
+        <div class="scm-group g-changes">
+          <h4>Changes</h4>
+          <div class="scm-file f-changes"><span>index.html</span><span><span class="plus">+</span><b>M</b></span></div>
+        </div>
+        <div class="scm-group g-staged">
+          <h4>Staged Changes</h4>
+          <div class="scm-file f-staged"><span>index.html</span><b>M</b></div>
+        </div>
+      </div>
+      <!-- Slot for a real GIF: <img src="../assets/vscode-source-control.gif" alt="..."> -->
+
+      <div class="note">Tip: open a terminal inside VS Code with <code>Ctrl+`</code>. Git commands there work the same as in any other terminal.</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="commands" class="reveal">
+      <h2><span class="num">5</span> Basic Git commands</h2>
+      <p>Git moves code through 4 areas. Each command pushes code to the next area:</p>
+      <div class="flow">
+        <div class="box" style="--i:0">Working folder</div>
+        <div class="arrow">git add</div>
+        <div class="box" style="--i:1">Staging</div>
+        <div class="arrow">git commit</div>
+        <div class="box" style="--i:2">Local repo</div>
+        <div class="arrow">git push</div>
+        <div class="box" style="--i:3">GitHub</div>
+      </div>
+
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>terminal</span></div>
+        <div class="term-body">
+          <p class="c">git init</p>
+          <p class="o">Initialized empty Git repository in .git/</p>
+          <p class="c">git add index.html</p>
+          <p class="c">git commit -m "feat: add homepage"</p>
+          <p class="o">[main (root-commit) a1b2c3d] feat: add homepage</p>
+          <p class="o"> 1 file changed, 12 insertions(+)</p>
+          <p class="c">git push -u origin main</p>
+          <p class="o">branch 'main' set up to track 'origin/main'.</p>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><code>git init</code><p>Turn the current folder into a Git repo.</p></div>
+        <div class="card"><code>git clone &lt;url&gt;</code><p>Download a repo from GitHub.</p></div>
+        <div class="card"><code>git status</code><p>See which files changed or are staged.</p></div>
+        <div class="card"><code>git add &lt;file&gt;</code><p>Move a file to the staging area.</p></div>
+        <div class="card"><code>git commit -m "msg"</code><p>Save a snapshot (commit) with a message.</p></div>
+        <div class="card"><code>git diff</code><p>See exactly which lines changed.</p></div>
+        <div class="card"><code>git log --oneline</code><p>Show commit history, one line each.</p></div>
+        <div class="card"><code>git branch</code><p>List or create branches.</p></div>
+        <div class="card"><code>git switch &lt;branch&gt;</code><p>Move to another branch.</p></div>
+        <div class="card"><code>git merge &lt;branch&gt;</code><p>Merge a branch into the current one.</p></div>
+        <div class="card"><code>git pull</code><p>Get new commits from GitHub.</p></div>
+        <div class="card"><code>git push</code><p>Send your commits to GitHub.</p></div>
+        <div class="card"><code>git remote -v</code><p>Show the remote repo you connect to.</p></div>
+      </div>
+      <div class="note">Good habit: run <code>git status</code> before every commit, and <code>git pull</code> before you start work.</div>
+    </section>
+
+    <!-- 6 -->
+    <section id="commit-rules" class="reveal">
+      <h2><span class="num">6</span> Commit rules</h2>
+      <p>Use the <b>Conventional Commits</b> standard. History is easy to read, bugs are easy to find, changelogs are easy to make.</p>
+      <pre class="code"><code>type(scope): short description</code></pre>
+      <p><code>scope</code> is optional. Example: <code>feat(nav): add language switch</code>.</p>
+
+      <table>
+        <tr><th>type</th><th>Use when</th></tr>
+        <tr><td><code>feat</code></td><td>You add a new feature</td></tr>
+        <tr><td><code>fix</code></td><td>You fix a bug</td></tr>
+        <tr><td><code>docs</code></td><td>You change docs only</td></tr>
+        <tr><td><code>style</code></td><td>Formatting or CSS change, no logic change</td></tr>
+        <tr><td><code>refactor</code></td><td>You rewrite code, behavior stays the same</td></tr>
+        <tr><td><code>test</code></td><td>You add or fix tests</td></tr>
+        <tr><td><code>chore</code></td><td>Small tasks: config, dependencies</td></tr>
+      </table>
+
+      <h3>Rules</h3>
+      <ul>
+        <li>Keep the description short, <b>50 characters at most</b>, no period at the end.</li>
+        <li>Use the imperative mood: <code>add</code>, not <code>added</code>.</li>
+        <li><b>One commit, one job.</b> Do not mix a bug fix and a new feature.</li>
+        <li>Commit small and often. Each commit should work.</li>
+        <li>Run <code>git add</code> only for the files you need. Avoid a blind <code>git add .</code>, it picks up junk files.</li>
+        <li><b>Never commit</b> secrets: <code>.env</code>, keys, tokens. Put them in <code>.gitignore</code>.</li>
+      </ul>
+
+      <div class="compare">
+        <div class="good">
+          <h4>✔ Good</h4>
+          <ul>
+            <li>feat: add contact form</li>
+            <li>fix(nav): close menu on click</li>
+            <li>docs: update install steps</li>
+          </ul>
+        </div>
+        <div class="bad">
+          <h4>✘ Not good</h4>
+          <ul>
+            <li>update</li>
+            <li>fixed stuff.</li>
+            <li>add form and fix menu and change colors</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="deploy" class="reveal">
+      <h2><span class="num">7</span> Deploy a static site to GitHub Pages</h2>
+      <p>GitHub Pages hosts HTML/CSS/JS pages for free. You only need a public repo.</p>
+      <ol>
+        <li>Put <code>index.html</code> in the root folder of the repo. In your HTML use <b>relative paths</b> (<code>style.css</code>, not <code>/style.css</code>), because the site lives under <code>/your-repo/</code>.</li>
+        <li>Commit and push to the <code>main</code> branch.</li>
+        <li>On GitHub: <b>Settings</b> → <b>Pages</b>.</li>
+        <li>Under <b>Source</b> choose <b>Deploy from a branch</b>. Under <b>Branch</b> choose <code>main</code> and <code>/ (root)</code>, then click <b>Save</b>.</li>
+        <li>Wait 1–2 minutes. The site address shows at the top of the Pages screen.</li>
+      </ol>
+      <pre class="code"><code>git add index.html style.css script.js
+git commit -m "feat: add tutorial site"
+git push origin main</code></pre>
+      <p>The address looks like this:</p>
+      <pre class="code"><code>https://YOUR-NAME.github.io/YOUR-REPO/</code></pre>
+      <div class="note">Each <code>git push</code> to <code>main</code> updates the site in about one minute. If you do not see the change, press <code>Ctrl+F5</code> to clear the cache.</div>
+    </section>
+  </main>
+
+  <footer>Made with ♥ for Git beginners · <a href="../">Bản tiếng Việt</a></footer>
+  <script src="../script.js"></script>
+</body>
+</html>

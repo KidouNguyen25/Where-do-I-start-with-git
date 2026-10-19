@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bắt đầu với Git – VS Code, GitHub từ con số 0</title>
+  <meta name="description" content="Hướng dẫn nhanh cho người mới: cài VS Code và Git, kết nối GitHub, lệnh Git cơ bản, quy tắc commit và deploy web tĩnh lên GitHub Pages.">
+  <link rel="alternate" hreflang="en" href="en/">
+  <link rel="alternate" hreflang="vi" href="./">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="progress"></div>
+
+  <nav class="nav">
+    <a href="#vscode">1. VS Code</a>
+    <a href="#git">2. Git</a>
+    <a href="#github">3. GitHub</a>
+    <a href="#vscode-git">4. Git trong VS Code</a>
+    <a href="#commands">5. Lệnh cơ bản</a>
+    <a href="#commit-rules">6. Quy tắc commit</a>
+    <a href="#deploy">7. Deploy</a>
+    <span class="spacer"></span>
+    <a class="lang" href="en/" hreflang="en">EN</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Bắt đầu với Git<br>từ con số 0</h1>
+    <p>Cài VS Code và Git, kết nối GitHub, nắm lệnh cơ bản và đưa web của bạn lên mạng. Đọc nhanh, làm theo là chạy.</p>
+    <a class="cta" href="#vscode">Bắt đầu thôi</a>
+  </header>
+
+  <main>
+    <!-- 1 -->
+    <section id="vscode" class="reveal">
+      <h2><span class="num">1</span> Cài đặt Visual Studio Code</h2>
+      <p>VS Code là trình soạn code miễn phí, có sẵn giao diện Git. Ta sẽ dùng nó cho cả hướng dẫn.</p>
+      <ol>
+        <li>Vào <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">code.visualstudio.com</a> và bấm <b>Download</b>.</li>
+        <li>Chạy file cài đặt. Ở bước <i>Select Additional Tasks</i>, tick <b>Add to PATH</b> và <b>Add "Open with Code"</b>.</li>
+        <li>Mở VS Code. Kiểm tra bằng cách mở terminal bất kỳ và gõ lệnh dưới.</li>
+      </ol>
+      <pre class="code"><code>code --version</code></pre>
+      <p>Sau này, để mở một thư mục bằng VS Code, đứng trong thư mục đó và gõ:</p>
+      <pre class="code"><code>code .</code></pre>
+      <!-- Chỗ cho GIF thật: <img src="assets/vscode-install.gif" alt="..."> -->
+    </section>
+
+    <!-- 2 -->
+    <section id="git" class="reveal">
+      <h2><span class="num">2</span> Cài đặt Git</h2>
+      <ol>
+        <li>Vào <a href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com/downloads</a>, tải bản cho hệ điều hành của bạn.</li>
+        <li>Chạy file cài đặt, cứ bấm <b>Next</b> với các tuỳ chọn mặc định. Bản Windows đã gồm <b>Git Credential Manager</b>, dùng ở phần 3.</li>
+        <li>Mở terminal mới (hoặc <code>Ctrl+`</code> trong VS Code) và kiểm tra.</li>
+      </ol>
+      <pre class="code"><code>git --version</code></pre>
+      <h3>Khai báo danh tính (làm một lần)</h3>
+      <p>Git ghi tên và email vào mỗi commit. Dùng <b>email của tài khoản GitHub</b> để commit gắn đúng người.</p>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>terminal</span></div>
+        <div class="term-body">
+          <p class="c">git --version</p>
+          <p class="o">git version 2.47.0.windows.1</p>
+          <p class="c">git config --global user.name "Ten Cua Ban"</p>
+          <p class="c">git config --global user.email "ban@example.com"</p>
+          <p class="c">git config --global --list</p>
+          <p class="o">user.name=Ten Cua Ban</p>
+          <p class="o">user.email=ban@example.com</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="github" class="reveal">
+      <h2><span class="num">3</span> Kết nối GitHub với Git</h2>
+      <p><b>Git</b> chạy trên máy bạn. <b>GitHub</b> là nơi lưu repo trên mạng. Muốn đẩy code lên, máy bạn phải chứng minh mình là chủ tài khoản.</p>
+
+      <div class="link">
+        <div class="node">Máy bạn<br>(Git)</div>
+        <div class="wire"></div>
+        <div class="node">GitHub</div>
+      </div>
+      <div class="link-steps">
+        <span>1. Git gửi yêu cầu push</span>
+        <span>2. GitHub hỏi: bạn là ai?</span>
+        <span>3. Bạn xác thực, code được lưu</span>
+      </div>
+
+      <h3>Bước 1: Tạo tài khoản và repo</h3>
+      <ol>
+        <li>Đăng ký tại <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>.</li>
+        <li>Bấm <b>New repository</b>, đặt tên, chọn <b>Public</b>, bấm <b>Create repository</b>. Chép URL repo.</li>
+      </ol>
+
+      <h3>Bước 2: Chọn cách xác thực</h3>
+      <p><b>Cách A – HTTPS + Git Credential Manager (dễ nhất, nên chọn).</b> Không cần cấu hình gì thêm. Lần push đầu tiên, một cửa sổ trình duyệt mở ra, bạn đăng nhập GitHub, xong. Thông tin được lưu an toàn trong máy.</p>
+      <pre class="code"><code>git remote add origin https://github.com/TEN-BAN/TEN-REPO.git
+git push -u origin main</code></pre>
+
+      <p><b>Cách B – SSH key.</b> Dành cho ai không muốn đăng nhập lại, hoặc dùng nhiều máy.</p>
+      <pre class="code"><code>ssh-keygen -t ed25519 -C "ban@example.com"
+cat ~/.ssh/id_ed25519.pub</code></pre>
+      <ol>
+        <li>Chép nội dung file <code>.pub</code> (khoá <b>công khai</b>).</li>
+        <li>GitHub → <b>Settings</b> → <b>SSH and GPG keys</b> → <b>New SSH key</b> → dán vào.</li>
+        <li>Thử kết nối, rồi dùng URL dạng SSH.</li>
+      </ol>
+      <pre class="code"><code>ssh -T git@github.com
+git remote add origin git@github.com:TEN-BAN/TEN-REPO.git
+git push -u origin main</code></pre>
+
+      <div class="note warn"><b>Không bao giờ</b> dán mật khẩu, token hoặc <b>khoá riêng</b> (<code>id_ed25519</code>, không có <code>.pub</code>) vào lệnh, file code hay chat. GitHub cũng không nhận mật khẩu thường cho Git qua HTTPS.</div>
+    </section>
+
+    <!-- 4 -->
+    <section id="vscode-git" class="reveal">
+      <h2><span class="num">4</span> Làm việc với Git và GitHub trong VS Code</h2>
+      <p>VS Code làm được hầu hết việc Git bằng chuột, không cần gõ lệnh.</p>
+
+      <h3>Đăng nhập GitHub</h3>
+      <p>Bấm biểu tượng <b>Accounts</b> (góc dưới bên trái) → <b>Sign in with GitHub</b> → cho phép trong trình duyệt.</p>
+
+      <h3>Lấy repo về máy hoặc đưa thư mục lên GitHub</h3>
+      <ul>
+        <li><b>Có repo sẵn:</b> <code>Ctrl+Shift+P</code> → <code>Git: Clone</code> → dán URL → chọn thư mục.</li>
+        <li><b>Thư mục mới:</b> mở thư mục → tab Source Control → <b>Publish to GitHub</b>. VS Code tạo repo và push luôn.</li>
+      </ul>
+
+      <h3>Quy trình hằng ngày</h3>
+      <p>Mở Source Control bằng <code>Ctrl+Shift+G</code>. Xem demo bên dưới:</p>
+      <ol>
+        <li>Sửa file, nó hiện ở mục <b>Changes</b>.</li>
+        <li>Bấm <b>+</b> để đưa vào <b>Staged Changes</b> (tương đương <code>git add</code>).</li>
+        <li>Gõ message theo quy tắc ở phần 6, bấm <b>Commit</b>.</li>
+        <li>Bấm <b>Sync Changes</b> để đẩy lên GitHub (tương đương <code>git push</code>).</li>
+      </ol>
+
+      <div class="scm">
+        <div class="scm-head">SOURCE CONTROL</div>
+        <div class="scm-msg" data-ph="Message (Ctrl+Enter to commit)" data-msg="feat: add homepage"></div>
+        <div class="scm-btn">✓ Commit</div>
+        <div class="scm-sync">⟳ Sync Changes 1↑</div>
+        <div class="scm-done">✔ Đã commit</div>
+        <div class="scm-group g-changes">
+          <h4>Changes</h4>
+          <div class="scm-file f-changes"><span>index.html</span><span><span class="plus">+</span><b>M</b></span></div>
+        </div>
+        <div class="scm-group g-staged">
+          <h4>Staged Changes</h4>
+          <div class="scm-file f-staged"><span>index.html</span><b>M</b></div>
+        </div>
+      </div>
+      <!-- Chỗ cho GIF thật: <img src="assets/vscode-source-control.gif" alt="..."> -->
+
+      <div class="note">Mẹo: mở terminal ngay trong VS Code bằng <code>Ctrl+`</code>. Lệnh Git gõ ở đó chạy y như terminal ngoài.</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="commands" class="reveal">
+      <h2><span class="num">5</span> Các lệnh Git cơ bản</h2>
+      <p>Git chuyển code qua 4 vùng. Mỗi lệnh đẩy code sang vùng kế tiếp:</p>
+      <div class="flow">
+        <div class="box" style="--i:0">Thư mục làm việc</div>
+        <div class="arrow">git add</div>
+        <div class="box" style="--i:1">Staging</div>
+        <div class="arrow">git commit</div>
+        <div class="box" style="--i:2">Repo local</div>
+        <div class="arrow">git push</div>
+        <div class="box" style="--i:3">GitHub</div>
+      </div>
+
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>terminal</span></div>
+        <div class="term-body">
+          <p class="c">git init</p>
+          <p class="o">Initialized empty Git repository in .git/</p>
+          <p class="c">git add index.html</p>
+          <p class="c">git commit -m "feat: add homepage"</p>
+          <p class="o">[main (root-commit) a1b2c3d] feat: add homepage</p>
+          <p class="o"> 1 file changed, 12 insertions(+)</p>
+          <p class="c">git push -u origin main</p>
+          <p class="o">branch 'main' set up to track 'origin/main'.</p>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card"><code>git init</code><p>Biến thư mục hiện tại thành repo Git.</p></div>
+        <div class="card"><code>git clone &lt;url&gt;</code><p>Tải repo từ GitHub về máy.</p></div>
+        <div class="card"><code>git status</code><p>Xem file nào đã sửa, đã staged.</p></div>
+        <div class="card"><code>git add &lt;file&gt;</code><p>Đưa file vào vùng staging.</p></div>
+        <div class="card"><code>git commit -m "msg"</code><p>Lưu ảnh chụp (commit) kèm lời nhắn.</p></div>
+        <div class="card"><code>git diff</code><p>Xem chính xác dòng nào đã đổi.</p></div>
+        <div class="card"><code>git log --oneline</code><p>Xem lịch sử commit gọn một dòng.</p></div>
+        <div class="card"><code>git branch</code><p>Liệt kê hoặc tạo nhánh.</p></div>
+        <div class="card"><code>git switch &lt;nhánh&gt;</code><p>Chuyển sang nhánh khác.</p></div>
+        <div class="card"><code>git merge &lt;nhánh&gt;</code><p>Gộp nhánh vào nhánh hiện tại.</p></div>
+        <div class="card"><code>git pull</code><p>Lấy commit mới từ GitHub về máy.</p></div>
+        <div class="card"><code>git push</code><p>Đẩy commit của bạn lên GitHub.</p></div>
+        <div class="card"><code>git remote -v</code><p>Xem repo từ xa đang nối tới.</p></div>
+      </div>
+      <div class="note">Thói quen tốt: chạy <code>git status</code> trước mỗi lần commit, và <code>git pull</code> trước khi bắt đầu làm việc.</div>
+    </section>
+
+    <!-- 6 -->
+    <section id="commit-rules" class="reveal">
+      <h2><span class="num">6</span> Quy tắc commit</h2>
+      <p>Dùng chuẩn <b>Conventional Commits</b>. Lịch sử dễ đọc, dễ tìm lỗi, dễ làm changelog.</p>
+      <pre class="code"><code>type(scope): mô tả ngắn</code></pre>
+      <p><code>scope</code> không bắt buộc. Ví dụ: <code>feat(nav): add language switch</code>.</p>
+
+      <table>
+        <tr><th>type</th><th>Dùng khi</th></tr>
+        <tr><td><code>feat</code></td><td>Thêm tính năng mới</td></tr>
+        <tr><td><code>fix</code></td><td>Sửa lỗi</td></tr>
+        <tr><td><code>docs</code></td><td>Chỉ đổi tài liệu</td></tr>
+        <tr><td><code>style</code></td><td>Đổi định dạng, CSS, không đổi logic</td></tr>
+        <tr><td><code>refactor</code></td><td>Viết lại code, không đổi hành vi</td></tr>
+        <tr><td><code>test</code></td><td>Thêm hoặc sửa test</td></tr>
+        <tr><td><code>chore</code></td><td>Việc vặt: cấu hình, dependency</td></tr>
+      </table>
+
+      <h3>Quy tắc</h3>
+      <ul>
+        <li>Mô tả ngắn, <b>tối đa 50 ký tự</b>, không dấu chấm cuối.</li>
+        <li>Dùng thể mệnh lệnh: <code>add</code>, không phải <code>added</code>.</li>
+        <li><b>Một commit, một việc.</b> Đừng gộp sửa lỗi và thêm tính năng.</li>
+        <li>Commit nhỏ, thường xuyên. Mỗi commit nên chạy được.</li>
+        <li>Chỉ <code>git add</code> đúng file cần. Tránh <code>git add .</code> bừa, nó kéo cả file rác.</li>
+        <li><b>Không commit</b> file bí mật: <code>.env</code>, khoá, token. Thêm chúng vào <code>.gitignore</code>.</li>
+      </ul>
+
+      <div class="compare">
+        <div class="good">
+          <h4>✔ Tốt</h4>
+          <ul>
+            <li>feat: add contact form</li>
+            <li>fix(nav): close menu on click</li>
+            <li>docs: update install steps</li>
+          </ul>
+        </div>
+        <div class="bad">
+          <h4>✘ Chưa tốt</h4>
+          <ul>
+            <li>update</li>
+            <li>fixed stuff.</li>
+            <li>add form and fix menu and change colors</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="deploy" class="reveal">
+      <h2><span class="num">7</span> Deploy web tĩnh lên GitHub Pages</h2>
+      <p>GitHub Pages host miễn phí các trang HTML/CSS/JS. Chỉ cần repo public.</p>
+      <ol>
+        <li>Đặt <code>index.html</code> ở thư mục gốc của repo. Trong HTML, dùng <b>đường dẫn tương đối</b> (<code>style.css</code>, không phải <code>/style.css</code>), vì site nằm dưới <code>/ten-repo/</code>.</li>
+        <li>Commit và push lên nhánh <code>main</code>.</li>
+        <li>Trên GitHub: <b>Settings</b> → <b>Pages</b>.</li>
+        <li>Mục <b>Source</b> chọn <b>Deploy from a branch</b>. Mục <b>Branch</b> chọn <code>main</code> và <code>/ (root)</code>, bấm <b>Save</b>.</li>
+        <li>Đợi 1–2 phút. Địa chỉ site hiện ở đầu trang Pages.</li>
+      </ol>
+      <pre class="code"><code>git add index.html style.css script.js
+git commit -m "feat: add tutorial site"
+git push origin main</code></pre>
+      <p>Địa chỉ có dạng:</p>
+      <pre class="code"><code>https://TEN-BAN.github.io/TEN-REPO/</code></pre>
+      <div class="note">Mỗi lần <code>git push</code> lên <code>main</code>, GitHub tự cập nhật site sau khoảng một phút. Nếu chưa thấy đổi, thử <code>Ctrl+F5</code> để xoá cache.</div>
+    </section>
+  </main>
+
+  <footer>Làm với ♥ cho người mới học Git · <a href="en/">English version</a></footer>
+  <script src="script.js"></script>
+</body>
+</html>
