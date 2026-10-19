@@ -7,12 +7,22 @@
 
   // reading progress bar
   const bar = document.querySelector(".progress");
-  const onScroll = () => {
+  let ticking = false;
+  const draw = () => {
+    ticking = false;
     const max = root.scrollHeight - root.clientHeight;
-    bar.style.width = (max > 0 ? (root.scrollTop / max) * 100 : 0) + "%";
+    bar.style.transform = "scaleX(" + (max > 0 ? root.scrollTop / max : 0) + ")";
   };
-  addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  addEventListener("scroll", () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(draw); }
+  }, { passive: true });
+  draw();
+
+  // pause looping CSS animations while off screen
+  const pauser = new IntersectionObserver((entries) => entries.forEach((e) => {
+    e.target.classList.toggle("paused", !e.isIntersecting);
+  }), { rootMargin: "100px" });
+  document.querySelectorAll(".hero, .flow, .link, .link-steps").forEach((el) => pauser.observe(el));
 
   // copy buttons
   document.querySelectorAll("pre.code").forEach((pre) => {
@@ -48,12 +58,18 @@
   // active nav link
   const links = new Map();
   document.querySelectorAll('.nav a[href^="#"]').forEach((a) => links.set(a.getAttribute("href").slice(1), a));
+  const nav = document.querySelector(".nav");
   const spy = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
       if (!e.isIntersecting) return;
       links.forEach((a) => a.classList.remove("active"));
       const a = links.get(e.target.id);
-      if (a) { a.classList.add("active"); a.scrollIntoView({ block: "nearest", inline: "center" }); }
+      if (!a) return;
+      a.classList.add("active");
+      // scroll only the nav strip sideways; scrollIntoView would also move the page
+      if (nav.scrollWidth > nav.clientWidth) {
+        nav.scrollTo({ left: a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2, behavior: "smooth" });
+      }
     }),
     { rootMargin: "-30% 0px -60% 0px" }
   );
@@ -83,6 +99,8 @@
     const body = term.querySelector(".term-body");
     const lines = [...body.querySelectorAll("p")].map((p) => ({ cls: p.className, text: p.textContent }));
     if (reduce) return;
+    // reserve the final height so typing never pushes the page down
+    body.style.minHeight = body.offsetHeight + "px";
     whileVisible(term, async (alive) => {
       term.classList.add("playing");
       while (alive()) {
